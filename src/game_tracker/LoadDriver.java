@@ -117,7 +117,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		randomButton.setBounds(500, 300, 25, 25);
 		insertFile.setBounds(500, 200, 25, 25);
 		
-		searchTextBox.setBounds(675, 120, 100, 25);
+		searchTextBox.setBounds(500, 200, 25, 25);
 		searchTextBox.getDocument().addDocumentListener(this);
 		searchTextBox.setVisible(false);
 				
@@ -234,7 +234,13 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					systemWriter.setVisible(false);
 					completeWriter.setVisible(false);
 					beatenWriter.setVisible(false);
-					addAGame();
+					try 
+					{
+						addAGame();
+					} catch (SQLException e1)
+					{
+						e1.printStackTrace();
+					}
 				}
 			}
 			
@@ -308,40 +314,68 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
         }
 	}
 	
-	@SuppressWarnings("null")
-	public void addAGame()
+	public void addAGame() throws SQLException
 	{
 		getGameTitle = gameWriter.getText();
 		getSystem = systemWriter.getText();
 		getComplete = completeWriter.getText();
 		getGameBeaten = beatenWriter.getText();
 		
-		try
+		boolean empty;
+		
+		if (getGameTitle.isEmpty())
 		{
+			empty = true;
+			query = ("Delete from MasterGameList where Game_Title = ''");
+		}
+			
+		else
+		{
+			empty = false;
 			query = ("Insert Into MasterGameList (Game_Title, Game_System, Complete, Game_Beaten) values"
-						+ "(" + "'" + getGameTitle + "'" + ","
-						+ "'" + getSystem + "'" + "," + "'" + 
-						getComplete + "'" + "," + "'" + getGameBeaten + "'" + ");");
-				
-			java.sql.PreparedStatement ps = conn.prepareStatement(query);
+					+ "(" + "'" + getGameTitle + "'" + ","
+					+ "'" + getSystem + "'" + "," + "'" + 
+					getComplete + "'" + "," + "'" + getGameBeaten + "'" + ");");
+		}
+			
+		PreparedStatement ps = null;
+		
+		System.out.println(query);
+		System.out.println("'" + getGameTitle + "'");
+		
+		try
+		{	
+			ps = (PreparedStatement) conn.prepareStatement(query);
 			int updateDB = ps.executeUpdate(query);
-				
-			if (getGameTitle != null)
+			
+			if (empty == false)
 				txtarea.append(getGameTitle + "\t" + getSystem + "\t" + getComplete + "\t" + getGameBeaten + "\t" + "\n");				
 		}
 		catch (SQLException e1) 
 		{
 			e1.printStackTrace();
 		}
+		finally
+		{
+			ps.close();
+		}
 	}
 	
 	@Override
-	public void changedUpdate(DocumentEvent arg0) {}
+	public void changedUpdate(DocumentEvent arg0)
+	{}
 
 	@Override
-	public void insertUpdate(DocumentEvent arg0) { search(); }
+	public void insertUpdate(DocumentEvent arg0) 
+	{ 
+		search(); 
+	}
+	
 	@Override
-	public void removeUpdate(DocumentEvent arg0) { search(); }
+	public void removeUpdate(DocumentEvent arg0)
+	{
+		search();
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e)
@@ -385,6 +419,9 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	
 	public static void main (String[] args) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int width = (int) screenSize.getWidth();
+		int height = (int) screenSize.getHeight();
 		LoadDriver loadDriver = new LoadDriver();
 		txtarea.setEditable(false);
 		txtarea.setVisible(true);
@@ -392,7 +429,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		frame.setBackground(Color.WHITE);
 		frame.add(pane, BorderLayout.WEST);
 		frame.add(loadDriver);
-		frame.setSize(1000, 1000);
+		frame.setSize(width, height);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
