@@ -1,0 +1,138 @@
+Game Title	System	Complete (Manual/Case)	Game Beaten
+Deus Ex: Human Revolution (Augmented Edition)	PS3	Yes	Yes
+Trails of Cold Steel (Lionheart Edition)	PS3	Yes	No
+Kingdom Hearts 1.5 ReMix (Limited)	PS3	Yes	Yes
+Dead Space 2	PS3	Yes	Yes
+Binary Domain	PS3	Yes	Yes
+Kingdom Hearts 2.5 ReMix (Limited)	PS3	Yes	Yes
+Remember Me	PS3	Yes	Yes
+Ragnarok Odyssey Ace	PS3	Yes	No
+Starhawk	PS3	Yes	No
+Hyperdimension Neptunia	PS3	Yes	Yes
+Hyperdimension Neptunia mk2 	PS3	Yes	No
+Hyperdimension Neptunia Victory	PS3	Yes	No
+Transfomers Fall of Cybertron	PS3	Yes	Yes
+The Saboteur	PS3	Yes	No
+Zone of the Enders HD Collection (Limited)	PS3	Yes	No
+Sly Cooper Thieves in Time	PS3	Yes	Yes
+Enslaved: Odyssey to the West	PS3	Yes	No
+Metal Gear Rising: Revengeance	PS3	Yes	Yes
+Fist of the North Star: Ken's Rage	PS3	Yes	No
+Assassin's Creed 3	PS3	Yes	Yes
+Assassin's Creed Revelations	PS3	Yes	Yes
+Assassin's Creed 2	PS3	Yes	Yes
+Front Mission Evolved	PS3	Yes	No
+3D Dot Game Heroes	PS3	Yes	No
+Yakuza 3	PS3	Yes	No
+Tales of Graces F	PS3	Yes	No
+Catherine	PS3	Yes	Yes
+Asura's Wrath	PS3	Yes	Yes
+Killer Is Dead	PS3	Yes	Yes
+Sonic Generations	PS3	Yes	Yes
+Bioshock 2	PS3	Yes	Yes
+Lollipop Chainsaw	PS3	Yes	Yes
+Singularity	PS3	Yes	No
+Lego Batman 2: DC Super Heroes	PS3	Yes	No
+Dead Rising 2: Off the Record	PS3	Yes	No
+Fuse	PS3	Yes	No
+Majin and the Forsaken Kingdom	PS3	Yes	No
+Metal Gear Solid HD Collection	PS3	Yes	Yes
+Ultimate Marvel vs Capcom 3	PS3	Yes	No
+Deadpool	PS3	Yes	Yes
+Dragon's Crown	PS3	Yes	No
+The Wolf Among Us	PS3	Yes	Yes
+Nier	PS3	Yes	Yes
+Metal Gear Solid V: The Phantom Pain	PS3	Yes	Yes
+Metal Gear Solid V: Ground Zeroes	PS3	Yes	Yes
+Kingdoms of Amalur: Reckoning	PS3	Yes	No
+Hitman: Absolution	PS3	Yes	No
+Hatsune Miku: Project Diva F	PS3	Yes	Yes
+Hatsune Miku: Project Diva F 2nd	PS3	Yes	No
+Dengeki Bunko: Fighting Climax	PS3	Yes	No
+Final Fantasy X/X-2 HD	PS3	Yes	No
+Final Fantasy XIII	PS3	Yes	No
+Final Fantasy XIII-2	PS3	Yes	No
+Final Fantasy XIII: Lightning Returns	PS3	Yes	No
+Far Cry 3	PS3	Yes	No
+Jak and Daxter HD Collection	PS3	Yes	Yes
+Modnation Racers	PS3	Yes	No
+Ratchet and Clank HD Collection	PS3	Yes	No
+Saints Row: Gat out of Hell	PS3	Yes	No
+Killzone 3	PS3	Yes	No
+Dynasty Warriors Strikeforce	PS3	Yes	No
+Anarchy Reigns	PS3	Yes	Yes
+Splinter Cell Blacklist	PS3	Yes	No
+Star Ocean: The Last Hope -International-	PS3	Yes	No
+Ratchet and Clank All 4 One	PS3	Yes	Yes
+Ratchet and Clank Into the Nexus	PS3	Yes	Yes
+Ratchet and Clank Full Frontal Assault	PS3	Yes	Yes
+South Park The Stick of Truth	PS3	Yes	No
+Alpha Protocal	PS3	Yes	No
+E.X. Troopers	PS3	Yes	Yes
+God of War: Origins Collection	PS3	Yes	Yes
+DmC: Devil May Cry	PS3	Yes	Yes
+Crysis 2: Limited Edition	PS3	Yes	No
+Ratchet and Clank Future: Tools of Destruction	PS3	Yes	Yes
+Ratchet and Clank Future: A Crack In Time	PS3	Yes	Yes
+Saints Row IV: National Treasure Edition	PS3	Yes	Yes
+Mafia II	PS3	Yes	No
+Fallout 3: Game of the Year Edition	PS3	Yes	No
+Fallout New Vegas: Ultimate Edition	PS3	Yes	No
+Drakengard 3	PS3	Yes	No
+Murdered Soul Suspect	PS3	Yes	No
+Deadly Premonition: The Director's Cut	PS3	Yes	Yes
+Little Big Planet 2: Special Edition	PS3	Yes	No
+Epic Mickey 2: The Power of Two	PS3	Yes	No
+Uncharted 3: Drake's Deception (Collector's)	PS3	Yes	Yes
+God of War: Ascension	PS3	Yes	Yes
+Devil May Cry 4	PS3	Yes	No
+Ni No Kuni: The Wrath of the White Witch	PS3	Yes	No
+Journey Collector's Edition	PS3	Yes	No
+Bioshock Infinite	PS3	Yes	Yes
+The Ico & Shadow of the Colossus Collection	PS3	Yes	No
+Bionic Commando	PS3	Yes	Yes
+Lair	PS3	Yes	No
+Katamari Forever	PS3	Yes	No
+Metal Gear Solid 4: Guns of the Patriots	PS3	Yes	Yes
+Sonic's Ultimate Genesis Collection 	PS3	Yes	No
+Killzone 2	PS3	Yes	Yes
+Overlord 2	PS3	Yes	No
+Viking Battle for Asgard	PS3	Yes	No
+Brutal Legend	PS3	Yes	No
+Folklore	PS3	Yes	No
+Ratchet and Clank: Quest for Booty	PS3	Yes	Yes
+Dragon Quest Heroes: The World Tree's Woe and the Blight Below	PS4	Yes	No
+Gravity Rush Remastered	PS4	Yes	No
+Street Fighter V (Collector's)	PS4	Yes	No
+Final Fantasy Type-0 HD	PS4	Yes	No
+Disney Infinity 3.0 Edition (Twilight of the Republic)	PS4	Yes	No
+Disney Infinity 3.0 Edition (The Force Awakens)	PS4	Yes	No
+Disney Infinity 3.0 Edition (Toy Box Takeover)	PS4	Yes	No
+Dragon Age Inquisition: Game of the Year Edition	PS4	Yes	No
+The Order: 1886	PS4	Yes	Yes
+Uncharted: Drake's Fortune	PS3	Yes	Yes
+Uncharted 2: Among Thieves	PS3	Yes	Yes
+Puppeteer	PS3	Yes	No
+Lost Planet 3	PS3	Yes	No
+Little Big Planet 3	PS4	Yes	No
+Ratchet and Clank	PS4	Yes	Yes
+Super Mario Maker	Wii U	Yes	Yes
+Mario Kart 8	Wii U 	Yes	Yes
+New Super Luigi U	Wii U	Yes	Yes
+Mario & Sonic at the 2014 Winter Games	Wii U	Yes	Yes
+New Super Mario Bros U	Wii U 	Yes	Yes
+Super Mario 3D World	Wii U	Yes	Yes
+Nintendo Land	Wii U	Yes	Yes
+Starfox Guard	Wii U	Yes	No
+Starfox Zero	Wii U 	Yes	No
+Rayman Legends	Wii U	Yes	Yes
+Wii Party U	Wii U	Yes	Yes
+Splatoon	Wii U	Yes	Yes
+ZombiU	Wii U	Yes	No
+Darksiders II	Wii U	Yes	Yes
+Pokken Tournament	Wii U	Yes	No
+Bayonetta	Wii U	Yes	Yes
+Bayonetta 2	Wii U	Yes	Yes
+NES Remix Pack	Wii U	Yes	No
+Captain Toad: Treasure Tracker	Wii U	Yes	Yes
+Sonic Lost World	Wii U	Yes	Yes
