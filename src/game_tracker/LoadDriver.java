@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.util.HashSet;
+import java.util.Set;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -50,10 +52,11 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	JLabel stopSearch = new JLabel("Start Typing to Search for a Game");
 	JLabel randomGame = new JLabel("Click Random Button to Find a Game to Play");
 	
-	JLabel systemSelect = new JLabel("Write the System Here");
-	JLabel gameWrite = new JLabel("Write Game's Title Here");
+	JLabel systemSelect = new JLabel("Write the System Here.");
+	JLabel gameWrite = new JLabel("Write Game's Title Here.");
 	JLabel completeYN = new JLabel("Is the game complete?");
 	JLabel beatenYN = new JLabel("Have you beaten this game?");
+	JLabel pickSystem = new JLabel("Pick a System to see Games for it.");
 	
 	int indexOfSystems = 5;
 	String[] game_Systems = {"All", "PS3", "PS4", "Wii U", "Wii", "GCN"};
@@ -61,13 +64,16 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	
 	public LoadDriver() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
+		setLayout(null);
 		connectionThings();
 		buttonDisplay();
 		
 		gameSystems.setSelectedIndex(indexOfSystems);
 		gameSystems.addActionListener(this);
-		gameSystems.setBounds(500, 200, 100, 25);
+		gameSystems.setBounds(35, 275, 100, 25);
+		pickSystem.setBounds(35, 250, 200, 25);
 		add(gameSystems);
+		add(pickSystem);
 	}
 	
 	public void connectionThings() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
@@ -109,43 +115,43 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	{
 		JButton searchButton = new JButton("Search Game List");
 		JButton addGameButton = new JButton("Add a Game");
-		JButton randomButton = new JButton("Random");
+		JButton randomButton = new JButton("Random Game");
 		JButton insertFile = new JButton("Insert New File");
 		
-		searchButton.setBounds(500, 500, 25, 25);
-		addGameButton.setBounds(500, 400, 25, 25);
-		randomButton.setBounds(500, 300, 25, 25);
-		insertFile.setBounds(500, 200, 25, 25);
+		insertFile.setBounds(35, 20, 150, 25);
+		searchButton.setBounds(35, 55, 150, 25);
+		addGameButton.setBounds(35, 90, 150, 25);
+		randomButton.setBounds(35, 130, 150, 25);
 		
-		searchTextBox.setBounds(500, 200, 25, 25);
+		searchTextBox.setBounds(200, 55, 200, 25);
 		searchTextBox.getDocument().addDocumentListener(this);
 		searchTextBox.setVisible(false);
 				
-		stopSearch.setBounds(700, 100, 100, 25);
+		stopSearch.setBounds(200, 75, 300, 25);
 		stopSearch.setVisible(false);
 		
-		systemSelect.setBounds(725, 80, 100, 25);
-		systemSelect.setVisible(false);
-		
-		gameWrite.setBounds(750, 60, 100, 25);
+		gameWrite.setBounds(200, 20, 300, 25);
 		gameWrite.setVisible(false);
 		
-		completeYN.setBounds(775, 40, 100, 25);
-		completeYN.setVisible(false);
-		
-		beatenYN.setBounds(800, 20, 100, 25);
-		beatenYN.setVisible(false);
-		
-		gameWriter.setBounds(825, 15, 100, 25);
+		gameWriter.setBounds(375, 20, 300, 25);
 		gameWriter.setVisible(false);
 		
-		systemWriter.setBounds(850, 15, 100, 25);
+		systemSelect.setBounds(200, 55, 300, 25);
+		systemSelect.setVisible(false);
+		
+		systemWriter.setBounds(375, 55, 100, 25);
 		systemWriter.setVisible(false);
 		
-		completeWriter.setBounds(875, 15, 100, 25);
+		completeYN.setBounds(200, 90, 300, 25);
+		completeYN.setVisible(false);
+		
+		completeWriter.setBounds(375, 90, 100, 25);
 		completeWriter.setVisible(false);
 		
-		beatenWriter.setBounds(900, 15, 100, 25);
+		beatenYN.setBounds(200, 130, 300, 25);
+		beatenYN.setVisible(false);
+		
+		beatenWriter.setBounds(375, 130, 100, 25);
 		beatenWriter.setVisible(false);
 		
 		searchButton.addActionListener(new ActionListener()
@@ -157,6 +163,14 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					searching = false;
 					searchButton.setText("Searching...");
 					searchTextBox.setVisible(true);
+					systemSelect.setVisible(false);
+					gameWrite.setVisible(false);
+					completeYN.setVisible(false);
+					beatenYN.setVisible(false);
+					gameWriter.setVisible(false);
+					systemWriter.setVisible(false);
+					completeWriter.setVisible(false);
+					beatenWriter.setVisible(false);
 					searchTextBox.setText("");
 					stopSearch.setText("Click the Button to stop Searching");
 					stopSearch.setVisible(true);
@@ -183,7 +197,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 				{
 					query = "select game_title, game_system from NotBeatenGames Order By Rand() Limit 0, 1;";
 					
-					randomGame.setBounds(900, 100, 100, 25);
+					randomGame.setBounds(210, 132, 400, 25);
 					
 					statement = conn.createStatement();
 					result = statement.executeQuery(query);
@@ -221,11 +235,17 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					systemWriter.setText(null);
 					completeWriter.setText(null);
 					beatenWriter.setText(null);
+					randomGame.setVisible(false);
+					searchTextBox.setVisible(false);
+					stopSearch.setVisible(false);
+					addGameButton.setText("Add This Game");
+					searchButton.setText("Search Game List");
 				}
 				
 				else
 				{
 					addingGame = true;
+					addGameButton.setText("Add a Game");
 					systemSelect.setVisible(false);
 					gameWrite.setVisible(false);
 					completeYN.setVisible(false);
@@ -234,6 +254,8 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					systemWriter.setVisible(false);
 					completeWriter.setVisible(false);
 					beatenWriter.setVisible(false);
+					randomGame.setText("Click Random Button to find a Game to Play");
+					randomGame.setVisible(true);
 					try 
 					{
 						addAGame();
@@ -323,7 +345,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		
 		boolean empty;
 		
-		if (getGameTitle.isEmpty())
+		if (getGameTitle.isEmpty() || getSystem.isEmpty() || getComplete.isEmpty() || getGameBeaten.isEmpty())
 		{
 			empty = true;
 			query = ("Delete from MasterGameList where Game_Title = ''");
