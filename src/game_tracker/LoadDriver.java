@@ -1,16 +1,20 @@
+/*
+ * @Author: Zachary Behnke
+ * @Description: This is the main class for the application, which handles everything the application does. It might
+ * be split into other classes later, as the project/code develops.
+ * NOTE: You need to have MySQL running on your system for the program to work.
+ * */
+
 package game_tracker;
 
+//These are all of the imports that I had to grab.
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
-import java.util.HashSet;
-import java.util.Set;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -22,6 +26,7 @@ import com.mysql.jdbc.PreparedStatement;
 @SuppressWarnings("serial")
 public class LoadDriver extends JPanel implements DocumentListener, ActionListener
 {
+	//This is where I initialize all of the variables being used throughout the program.
 	static JFrame frame = new JFrame("Game Tracker Project");
 	static JTextArea txtarea = new JTextArea();
 	static JScrollPane pane = new JScrollPane(txtarea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -31,6 +36,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	JTextField systemWriter = new JTextField(25);
 	JTextField completeWriter = new JTextField(25);
 	JTextField beatenWriter = new JTextField(25);
+	JTextField deleteWriter = new JTextField(25);
 	
 	public Statement statement = null;
 	public ResultSet result = null;
@@ -42,26 +48,31 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	public Connection conn = DriverManager.getConnection(url, user, pass);
 	boolean searching = true;
 	boolean addingGame = true;
+	boolean deletingGame = true;
 	
-	String getGameTitle, getSystem, getComplete, getGameBeaten;
+	String getGameTitle, getSystem, getComplete, getGameBeaten, getDeletedGame;
 	
+	//Used for the searching method.
 	Color Hilit_Color = Color.CYAN;
 	final Highlighter hilit = new DefaultHighlighter();
 	final Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Hilit_Color);
 	
 	JLabel stopSearch = new JLabel("Start Typing to Search for a Game");
-	JLabel randomGame = new JLabel("Click Random Button to Find a Game to Play");
+	JLabel randomGame = new JLabel("");
 	
 	JLabel systemSelect = new JLabel("Write the System Here.");
 	JLabel gameWrite = new JLabel("Write Game's Title Here.");
 	JLabel completeYN = new JLabel("Is the game complete?");
 	JLabel beatenYN = new JLabel("Have you beaten this game?");
 	JLabel pickSystem = new JLabel("Pick a System to see Games for it.");
+	JLabel deleteGame = new JLabel("Write the Game's Title to delete it.");
 	
+	//Used to select your system of choice.
 	int indexOfSystems = 5;
 	String[] game_Systems = {"All", "PS3", "PS4", "Wii U", "Wii", "GCN"};
-	JComboBox gameSystems = new JComboBox(game_Systems);
+	JComboBox<String> gameSystems = new JComboBox<String>(game_Systems);
 	
+	//Basic constructor to run methods and set the layout.
 	public LoadDriver() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
 		setLayout(null);
@@ -76,12 +87,14 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		add(pickSystem);
 	}
 	
+	//This method just set up the basic connection to the mySQL server.
 	public void connectionThings() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{	
 		try 
 		{	
             Class.forName("com.mysql.jdbc.Driver").newInstance(); 
 			
+            //Checks for a connection, then runs a query.
 			if (conn != null)
 				System.out.println("Connected");
 			query = "Select * from MasterGameList";
@@ -89,6 +102,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			result = statement.executeQuery(query);
 			txtarea.append("Game Title" + "\t" + "Game System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n");
 			
+			//This appends all the games from MasterGameList to the text area, where everything is seen.
 			while (result.next())
 			{
 				String Game_Title = result.getString("Game_Title");
@@ -111,17 +125,20 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		}
 	}
 	
+	//This function deals with the button displays, setting the bounds of each element, and what buttons do what.
 	public void buttonDisplay()
 	{
 		JButton searchButton = new JButton("Search Game List");
 		JButton addGameButton = new JButton("Add a Game");
-		JButton randomButton = new JButton("Random Game");
+		JButton randomButton = new JButton("Find Random Game");
 		JButton insertFile = new JButton("Insert New File");
+		JButton deleteGameButton = new JButton("Delete a Game");
 		
 		insertFile.setBounds(35, 20, 150, 25);
 		searchButton.setBounds(35, 55, 150, 25);
 		addGameButton.setBounds(35, 90, 150, 25);
-		randomButton.setBounds(35, 130, 150, 25);
+		randomButton.setBounds(35, 125, 150, 25);
+		deleteGameButton.setBounds(35, 160, 150, 25);
 		
 		searchTextBox.setBounds(200, 55, 200, 25);
 		searchTextBox.getDocument().addDocumentListener(this);
@@ -154,6 +171,50 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		beatenWriter.setBounds(375, 130, 100, 25);
 		beatenWriter.setVisible(false);
 		
+		deleteGame.setBounds(200, 140, 300, 25);
+		deleteGame.setVisible(false);
+		
+		deleteWriter.setBounds(200, 160, 300, 25);
+		deleteWriter.setVisible(false);
+		
+		deleteGameButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if (deletingGame == true)
+				{
+					deletingGame = false;
+					deleteGameButton.setText("Deleting Game...");
+					deleteWriter.setVisible(true);
+					deleteGame.setVisible(true);
+					insertFile.setEnabled(false);
+					searchButton.setEnabled(false);
+					addGameButton.setEnabled(false);
+					randomButton.setEnabled(false);
+					randomGame.setVisible(false);
+				}
+				else
+				{
+					deletingGame = true;
+					deleteGameButton.setText("Delete A Game");
+					deleteWriter.setVisible(false);
+					deleteGame.setVisible(false);
+					insertFile.setEnabled(true);
+					searchButton.setEnabled(true);
+					addGameButton.setEnabled(true);
+					randomButton.setEnabled(true);
+					randomGame.setVisible(true);
+					try 
+					{
+						deleteAGame();
+					} catch (SQLException e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		
 		searchButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -163,14 +224,10 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					searching = false;
 					searchButton.setText("Searching...");
 					searchTextBox.setVisible(true);
-					systemSelect.setVisible(false);
-					gameWrite.setVisible(false);
-					completeYN.setVisible(false);
-					beatenYN.setVisible(false);
-					gameWriter.setVisible(false);
-					systemWriter.setVisible(false);
-					completeWriter.setVisible(false);
-					beatenWriter.setVisible(false);
+					addGameButton.setEnabled(false);
+					randomButton.setEnabled(false);
+					insertFile.setEnabled(false);
+					deleteGameButton.setEnabled(false);
 					searchTextBox.setText("");
 					stopSearch.setText("Click the Button to stop Searching");
 					stopSearch.setVisible(true);
@@ -182,8 +239,12 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					searchButton.setText("Search Game List");
 					searchTextBox.setVisible(false);
 					stopSearch.setVisible(false);
-					randomGame.setText("Click Random Button to find a Game to Play");
+					randomGame.setText("");
 					randomGame.setVisible(true);
+					addGameButton.setEnabled(true);
+					randomButton.setEnabled(true);
+					insertFile.setEnabled(true);
+					deleteGameButton.setEnabled(true);
 				}
 					
 			}
@@ -191,6 +252,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		
 		randomButton.addActionListener(new ActionListener()
 		{
+			//this button selects a non-beaten game from the list, randomly
 			public void actionPerformed(ActionEvent e)
 			{
 				try
@@ -238,8 +300,12 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					randomGame.setVisible(false);
 					searchTextBox.setVisible(false);
 					stopSearch.setVisible(false);
+					insertFile.setEnabled(false);
+					randomButton.setEnabled(false);
+					deleteGameButton.setEnabled(false);
+					searchButton.setEnabled(false);
+					
 					addGameButton.setText("Add This Game");
-					searchButton.setText("Search Game List");
 				}
 				
 				else
@@ -254,8 +320,12 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					systemWriter.setVisible(false);
 					completeWriter.setVisible(false);
 					beatenWriter.setVisible(false);
-					randomGame.setText("Click Random Button to find a Game to Play");
+					randomGame.setText("");
 					randomGame.setVisible(true);
+					insertFile.setEnabled(true);
+					randomButton.setEnabled(true);
+					deleteGameButton.setEnabled(true);
+					searchButton.setEnabled(true);
 					try 
 					{
 						addAGame();
@@ -282,10 +352,12 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			}
 		});*/
 		
+		//adds all of the components to the frame 
 		add(searchButton);
 		add(addGameButton);
 		add(randomButton);
 		add(insertFile);
+		add(deleteGameButton);
 		add(searchTextBox);
 		add(stopSearch);
 		add(randomGame);
@@ -297,8 +369,11 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		add(beatenWriter);
 		add(completeYN);
 		add(beatenYN);
+		add(deleteGame);
+		add(deleteWriter);
 	}
 	
+	//this function searches through the text area to find the game you type into the text box.
 	public void search()
 	{
 		txtarea.setHighlighter(hilit);
@@ -316,7 +391,8 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
         int index = content.indexOf(s, 0);
         
         if (index >= 0) 
-        {   // match found
+        {   
+        	// match found
             try
             {
                 int end = index + s.length();
@@ -336,6 +412,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
         }
 	}
 	
+	//this function adds a game to the database, and it is shown in the text area, appended to the bottom.
 	public void addAGame() throws SQLException
 	{
 		getGameTitle = gameWriter.getText();
@@ -345,16 +422,18 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		
 		boolean empty;
 		
+		//this checks whether or not any of the text fields are empty, and if so, it doesn't add the game.
 		if (getGameTitle.isEmpty() || getSystem.isEmpty() || getComplete.isEmpty() || getGameBeaten.isEmpty())
 		{
 			empty = true;
 			query = ("Delete from MasterGameList where Game_Title = ''");
 		}
 			
+		//inserts the game, with all its respective information
 		else
 		{
 			empty = false;
-			query = ("Insert Into MasterGameList (Game_Title, Game_System, Complete, Game_Beaten) values"
+			query = ("Insert Into MasterGameList (Game_Title, Game_System, Complete, Game_Beaten) values "
 					+ "(" + "'" + getGameTitle + "'" + ","
 					+ "'" + getSystem + "'" + "," + "'" + 
 					getComplete + "'" + "," + "'" + getGameBeaten + "'" + ");");
@@ -362,12 +441,10 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			
 		PreparedStatement ps = null;
 		
-		System.out.println(query);
-		System.out.println("'" + getGameTitle + "'");
-		
 		try
 		{	
 			ps = (PreparedStatement) conn.prepareStatement(query);
+			@SuppressWarnings("unused")
 			int updateDB = ps.executeUpdate(query);
 			
 			if (empty == false)
@@ -383,6 +460,33 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		}
 	}
 	
+	//this function deletes a game from the database, still needs work however, since you have to reload the app
+	//to see the change
+	public void deleteAGame() throws SQLException
+	{
+		getDeletedGame = deleteWriter.getText();
+		
+		query = ("Delete from MasterGameList where game_title = " + "'" + getDeletedGame + "'" + ";");
+		
+		PreparedStatement ps = null;
+		
+		try
+		{
+			ps = (PreparedStatement) conn.prepareStatement(query);
+			@SuppressWarnings("unused")
+			int deleteGameDB = ps.executeUpdate(query);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			ps.close();
+		}
+	}
+	
+	//these three functions are used for the searching function.
 	@Override
 	public void changedUpdate(DocumentEvent arg0)
 	{}
@@ -399,10 +503,12 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		search();
 	}
 	
+	//This action performed function handles when you switch systems
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		JComboBox cb = (JComboBox) e.getSource();
+		@SuppressWarnings("unchecked")
+		JComboBox<String> cb = (JComboBox<String>) e.getSource();
         String systemName = (String) cb.getSelectedItem();
 		query = ("Select * from MasterGameList Where game_system = " + "'" + systemName + "'" + ";");
 		if (systemName == "All")
@@ -439,6 +545,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
         }
 	}
 	
+	//This is the main function used to run the application.
 	public static void main (String[] args) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
