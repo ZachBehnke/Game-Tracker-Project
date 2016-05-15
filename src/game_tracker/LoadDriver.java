@@ -49,6 +49,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	boolean searching = true;
 	boolean addingGame = true;
 	boolean deletingGame = true;
+	boolean updatingGame = true;
 	
 	String getGameTitle, getSystem, getComplete, getGameBeaten, getDeletedGame;
 	
@@ -133,12 +134,14 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		JButton randomButton = new JButton("Find Random Game");
 		JButton insertFile = new JButton("Insert New File");
 		JButton deleteGameButton = new JButton("Delete a Game");
+		JButton updateGameButton = new JButton("Update a Game");
 		
 		insertFile.setBounds(35, 20, 150, 25);
 		searchButton.setBounds(35, 55, 150, 25);
 		addGameButton.setBounds(35, 90, 150, 25);
 		randomButton.setBounds(35, 125, 150, 25);
 		deleteGameButton.setBounds(35, 160, 150, 25);
+		updateGameButton.setBounds(35, 195, 150, 25);
 		
 		searchTextBox.setBounds(200, 55, 200, 25);
 		searchTextBox.getDocument().addDocumentListener(this);
@@ -191,6 +194,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					searchButton.setEnabled(false);
 					addGameButton.setEnabled(false);
 					randomButton.setEnabled(false);
+					updateGameButton.setEnabled(false);
 					randomGame.setVisible(false);
 				}
 				else
@@ -203,6 +207,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					searchButton.setEnabled(true);
 					addGameButton.setEnabled(true);
 					randomButton.setEnabled(true);
+					updateGameButton.setEnabled(true);
 					randomGame.setVisible(true);
 					try 
 					{
@@ -228,6 +233,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					randomButton.setEnabled(false);
 					insertFile.setEnabled(false);
 					deleteGameButton.setEnabled(false);
+					updateGameButton.setEnabled(false);
 					searchTextBox.setText("");
 					stopSearch.setText("Click the Button to stop Searching");
 					stopSearch.setVisible(true);
@@ -245,6 +251,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					randomButton.setEnabled(true);
 					insertFile.setEnabled(true);
 					deleteGameButton.setEnabled(true);
+					updateGameButton.setEnabled(true);
 				}
 					
 			}
@@ -304,7 +311,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					randomButton.setEnabled(false);
 					deleteGameButton.setEnabled(false);
 					searchButton.setEnabled(false);
-					
+					updateGameButton.setEnabled(false);
 					addGameButton.setText("Add This Game");
 				}
 				
@@ -326,6 +333,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					randomButton.setEnabled(true);
 					deleteGameButton.setEnabled(true);
 					searchButton.setEnabled(true);
+					updateGameButton.setEnabled(true);
 					try 
 					{
 						addAGame();
@@ -335,7 +343,33 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					}
 				}
 			}
-			
+		});
+		
+		updateGameButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if (updatingGame == true)
+				{
+					updatingGame = false;
+					insertFile.setEnabled(false);
+					randomButton.setEnabled(false);
+					deleteGameButton.setEnabled(false);
+					searchButton.setEnabled(false);
+					addGameButton.setEnabled(false);
+					updateGameButton.setText("Updating Game...");
+				}
+				else
+				{
+					updatingGame = true;
+					insertFile.setEnabled(true);
+					randomButton.setEnabled(true);
+					deleteGameButton.setEnabled(true);
+					searchButton.setEnabled(true);
+					addGameButton.setEnabled(true);
+					updateGameButton.setText("Update a Game");
+				}
+			}
 		});
 		
 		/*insertFile.addActionListener(new ActionListener()
@@ -358,6 +392,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		add(randomButton);
 		add(insertFile);
 		add(deleteGameButton);
+		add(updateGameButton);
 		add(searchTextBox);
 		add(stopSearch);
 		add(randomGame);
