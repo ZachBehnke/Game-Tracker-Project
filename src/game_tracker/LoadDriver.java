@@ -200,7 +200,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 				else
 				{
 					deletingGame = true;
-					deleteGameButton.setText("Delete A Game");
+					deleteGameButton.setText("Delete a Game");
 					deleteWriter.setVisible(false);
 					deleteGame.setVisible(false);
 					insertFile.setEnabled(true);
@@ -351,7 +351,16 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			{
 				if (updatingGame == true)
 				{
+					gameWriter.setText("");
+					beatenWriter.setText("");
+					completeWriter.setText("");
 					updatingGame = false;
+					gameWriter.setVisible(true);
+					completeWriter.setVisible(true);
+					beatenWriter.setVisible(true);
+					gameWrite.setVisible(true);
+					completeYN.setVisible(true);
+					beatenYN.setVisible(true);
 					insertFile.setEnabled(false);
 					randomButton.setEnabled(false);
 					deleteGameButton.setEnabled(false);
@@ -362,12 +371,25 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 				else
 				{
 					updatingGame = true;
+					gameWriter.setVisible(false);
+					completeWriter.setVisible(false);
+					beatenWriter.setVisible(false);
+					gameWrite.setVisible(false);
+					completeYN.setVisible(false);
+					beatenYN.setVisible(false);
 					insertFile.setEnabled(true);
 					randomButton.setEnabled(true);
 					deleteGameButton.setEnabled(true);
 					searchButton.setEnabled(true);
 					addGameButton.setEnabled(true);
 					updateGameButton.setText("Update a Game");
+					try
+					{
+						updateAGame();
+					} catch (SQLException e1)
+					{
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -512,6 +534,30 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			int deleteGameDB = ps.executeUpdate(query);
 		}
 		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			ps.close();
+		}
+	}
+	
+	public void updateAGame() throws SQLException
+	{
+		String gameTitle = gameWriter.getText();
+		String beatenGame = beatenWriter.getText();
+		String completeGame = completeWriter.getText();
+		
+		query = ("Update MasterGameList Set game_beaten =" + "'" +  beatenGame + "'" + ", complete =" + "'" + completeGame + "'" + "where game_title =" + "'" + gameTitle + "'" + ";");
+		
+		PreparedStatement ps = null;
+		try 
+		{
+			ps = (PreparedStatement) conn.prepareStatement(query);
+			@SuppressWarnings("unused")
+			int updateGameDB = ps.executeUpdate(query);
+		} catch (SQLException e) 
 		{
 			e.printStackTrace();
 		}
