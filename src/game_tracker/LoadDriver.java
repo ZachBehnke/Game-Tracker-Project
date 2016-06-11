@@ -55,11 +55,14 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	
 	//Used for the searching method.
 	Color Hilit_Color = Color.CYAN;
+	Color Bad_Color = Color.RED;
 	final Highlighter hilit = new DefaultHighlighter();
 	final Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Hilit_Color);
+	final Highlighter.HighlightPainter dontAdd = new DefaultHighlighter.DefaultHighlightPainter(Bad_Color);
 	
 	JLabel stopSearch = new JLabel("Start Typing to Search for a Game");
 	JLabel randomGame = new JLabel("");
+	JLabel countNumber = new JLabel("");
 	
 	JLabel systemSelect = new JLabel("Write the System Here.");
 	JLabel gameWrite = new JLabel("Write Game's Title Here.");
@@ -82,8 +85,8 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		
 		gameSystems.setSelectedIndex(indexOfSystems);
 		gameSystems.addActionListener(this);
-		gameSystems.setBounds(35, 275, 100, 25);
-		pickSystem.setBounds(35, 250, 200, 25);
+		gameSystems.setBounds(35, 285, 100, 25);
+		pickSystem.setBounds(35, 260, 200, 25);
 		add(gameSystems);
 		add(pickSystem);
 	}
@@ -135,6 +138,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		JButton insertFile = new JButton("Insert New File");
 		JButton deleteGameButton = new JButton("Delete a Game");
 		JButton updateGameButton = new JButton("Update a Game");
+		JButton countButton = new JButton("Total # of Games");
 		
 		insertFile.setBounds(35, 20, 150, 25);
 		searchButton.setBounds(35, 55, 150, 25);
@@ -142,6 +146,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		randomButton.setBounds(35, 125, 150, 25);
 		deleteGameButton.setBounds(35, 160, 150, 25);
 		updateGameButton.setBounds(35, 195, 150, 25);
+		countButton.setBounds(35, 230, 150, 25);
 		
 		searchTextBox.setBounds(200, 55, 200, 25);
 		searchTextBox.getDocument().addDocumentListener(this);
@@ -196,6 +201,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					randomButton.setEnabled(false);
 					updateGameButton.setEnabled(false);
 					randomGame.setVisible(false);
+					countNumber.setVisible(false);
 				}
 				else
 				{
@@ -208,11 +214,14 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					addGameButton.setEnabled(true);
 					randomButton.setEnabled(true);
 					updateGameButton.setEnabled(true);
+					randomGame.setText("");
 					randomGame.setVisible(true);
+					countNumber.setText("");
+					countNumber.setVisible(true);
 					try 
 					{
 						deleteAGame();
-					} catch (SQLException e1)
+					} catch (SQLException | BadLocationException e1)
 					{
 						e1.printStackTrace();
 					}
@@ -238,6 +247,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					stopSearch.setText("Click the Button to stop Searching");
 					stopSearch.setVisible(true);
 					randomGame.setVisible(false);
+					countNumber.setVisible(false);
 				}
 				else
 				{
@@ -247,6 +257,8 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					stopSearch.setVisible(false);
 					randomGame.setText("");
 					randomGame.setVisible(true);
+					countNumber.setText("");
+					countNumber.setVisible(true);
 					addGameButton.setEnabled(true);
 					randomButton.setEnabled(true);
 					insertFile.setEnabled(true);
@@ -305,6 +317,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					completeWriter.setText(null);
 					beatenWriter.setText(null);
 					randomGame.setVisible(false);
+					countNumber.setVisible(false);
 					searchTextBox.setVisible(false);
 					stopSearch.setVisible(false);
 					insertFile.setEnabled(false);
@@ -329,6 +342,8 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					beatenWriter.setVisible(false);
 					randomGame.setText("");
 					randomGame.setVisible(true);
+					countNumber.setText("");
+					countNumber.setVisible(true);
 					insertFile.setEnabled(true);
 					randomButton.setEnabled(true);
 					deleteGameButton.setEnabled(true);
@@ -337,7 +352,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					try 
 					{
 						addAGame();
-					} catch (SQLException e1)
+					} catch (SQLException | BadLocationException e1)
 					{
 						e1.printStackTrace();
 					}
@@ -361,6 +376,8 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					gameWrite.setVisible(true);
 					completeYN.setVisible(true);
 					beatenYN.setVisible(true);
+					randomGame.setVisible(false);
+					countNumber.setVisible(false);
 					insertFile.setEnabled(false);
 					randomButton.setEnabled(false);
 					deleteGameButton.setEnabled(false);
@@ -377,6 +394,10 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					gameWrite.setVisible(false);
 					completeYN.setVisible(false);
 					beatenYN.setVisible(false);
+					randomGame.setText("");
+					randomGame.setVisible(true);
+					countNumber.setText("");
+					countNumber.setVisible(true);
 					insertFile.setEnabled(true);
 					randomButton.setEnabled(true);
 					deleteGameButton.setEnabled(true);
@@ -391,6 +412,15 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 						e1.printStackTrace();
 					}
 				}
+			}
+		});
+		
+		countButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				countNumber.setBounds(200, 230, 100, 25);
+				countNumber.setText(String.valueOf(txtarea.getLineCount() - 2));
 			}
 		});
 		
@@ -415,6 +445,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		add(insertFile);
 		add(deleteGameButton);
 		add(updateGameButton);
+		add(countButton);
 		add(searchTextBox);
 		add(stopSearch);
 		add(randomGame);
@@ -428,6 +459,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		add(beatenYN);
 		add(deleteGame);
 		add(deleteWriter);
+		add(countNumber);
 	}
 	
 	//this function searches through the text area to find the game you type into the text box.
@@ -470,7 +502,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	}
 	
 	//this function adds a game to the database, and it is shown in the text area, appended to the bottom.
-	public void addAGame() throws SQLException
+	public void addAGame() throws SQLException, BadLocationException
 	{
 		getGameTitle = gameWriter.getText();
 		getSystem = systemWriter.getText();
@@ -490,6 +522,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		else
 		{
 			empty = false;
+				
 			query = ("Insert Into MasterGameList (Game_Title, Game_System, Complete, Game_Beaten) values "
 					+ "(" + "'" + getGameTitle + "'" + ","
 					+ "'" + getSystem + "'" + "," + "'" + 
@@ -519,10 +552,13 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	
 	//this function deletes a game from the database, still needs work however, since you have to reload the app
 	//to see the change
-	public void deleteAGame() throws SQLException
+	public void deleteAGame() throws SQLException, BadLocationException
 	{
 		getDeletedGame = deleteWriter.getText();
 		
+		String content = txtarea.getText();
+        int index = content.indexOf(getDeletedGame, 0);
+        		
 		query = ("Delete from MasterGameList where game_title = " + "'" + getDeletedGame + "'" + ";");
 		
 		PreparedStatement ps = null;
@@ -532,6 +568,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			ps = (PreparedStatement) conn.prepareStatement(query);
 			@SuppressWarnings("unused")
 			int deleteGameDB = ps.executeUpdate(query);
+			txtarea.getDocument().remove(index, getDeletedGame.length());
 		}
 		catch (SQLException e)
 		{
