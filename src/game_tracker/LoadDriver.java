@@ -73,7 +73,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	
 	//Used to select your system of choice.
 	int indexOfSystems = 5;
-	String[] game_Systems = {"All", "PS3", "PS4", "Wii U", "Wii", "GCN"};
+	String[] game_Systems = {"All", "PS3", "PS4", "Wii U", "Wii", "GCN", "NES", "SNES", "N64", "3DS", "Vita", "DS", "DC", "PS1", "PS2", "Xbox", "Saturn"};
 	JComboBox<String> gameSystems = new JComboBox<String>(game_Systems);
 	
 	//Basic constructor to run methods and set the layout.
@@ -504,7 +504,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	//this function adds a game to the database, and it is shown in the text area, appended to the bottom.
 	public void addAGame() throws SQLException, BadLocationException
 	{
-		getGameTitle = gameWriter.getText();
+		getGameTitle = gameWriter.getText().replace("'","''");
 		getSystem = systemWriter.getText();
 		getComplete = completeWriter.getText();
 		getGameBeaten = beatenWriter.getText();
@@ -522,11 +522,13 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		else
 		{
 			empty = false;
-				
+		
 			query = ("Insert Into MasterGameList (Game_Title, Game_System, Complete, Game_Beaten) values "
 					+ "(" + "'" + getGameTitle + "'" + ","
 					+ "'" + getSystem + "'" + "," + "'" + 
 					getComplete + "'" + "," + "'" + getGameBeaten + "'" + ");");
+			
+			System.out.println(query);
 		}
 			
 		PreparedStatement ps = null;
@@ -554,11 +556,8 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	//to see the change
 	public void deleteAGame() throws SQLException, BadLocationException
 	{
-		getDeletedGame = deleteWriter.getText();
-		
-		String content = txtarea.getText();
-        int index = content.indexOf(getDeletedGame, 0);
-        		
+		getDeletedGame = deleteWriter.getText().replace("'", "''");
+	        		
 		query = ("Delete from MasterGameList where game_title = " + "'" + getDeletedGame + "'" + ";");
 		
 		PreparedStatement ps = null;
@@ -568,7 +567,6 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			ps = (PreparedStatement) conn.prepareStatement(query);
 			@SuppressWarnings("unused")
 			int deleteGameDB = ps.executeUpdate(query);
-			txtarea.getDocument().remove(index, getDeletedGame.length());
 		}
 		catch (SQLException e)
 		{
@@ -582,7 +580,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	
 	public void updateAGame() throws SQLException
 	{
-		String gameTitle = gameWriter.getText();
+		String gameTitle = gameWriter.getText().replace("'", "''");
 		String beatenGame = beatenWriter.getText();
 		String completeGame = completeWriter.getText();
 		
