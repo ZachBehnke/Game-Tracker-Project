@@ -94,6 +94,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	}
 	
 	//This method just set up the basic connection to the mySQL server.
+	@SuppressWarnings("static-access")
 	public void connectionThings() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{	
 		try 
@@ -106,7 +107,8 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			query = "Select * from MasterGameList";
 			statement = conn.createStatement();
 			result = statement.executeQuery(query);
-			txtarea.append("Game Title" + "\t" + "Game System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n");
+			txtarea.append("Game Title                                             " + 
+			"\t" + "System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n" + "\n");
 			
 			//This appends all the games from MasterGameList to the text area, where everything is seen.
 			while (result.next())
@@ -115,6 +117,10 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 				String Game_System = result.getString("Game_System");
 				String Complete = result.getString("Complete");
 				String Game_Beaten = result.getString("Game_Beaten");
+				if (Game_Title.length() < 20)
+					Game_Title = Game_Title.format("%-55s", Game_Title);
+				if (Game_Title.length() < 45)
+					Game_Title = Game_Title.format("%-45s", Game_Title);
 				txtarea.append(Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");
 			}
 		}
@@ -314,6 +320,8 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 					beatenWriter.setVisible(true);
 					gameWriter.setText(null);
 					systemWriter.setText(null);
+					completeWriter.setText(null);
+					beatenWriter.setText(null);
 					randomGame.setVisible(false);
 					countNumber.setVisible(false);
 					searchTextBox.setVisible(false);
@@ -483,6 +491,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	}
 	
 	//this function adds a game to the database, and it is shown in the text area, appended to the bottom.
+	@SuppressWarnings("static-access")
 	public void addAGame() throws SQLException, BadLocationException
 	{
 		getGameTitle = gameWriter.getText().replace("'","''");
@@ -491,6 +500,11 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		isComplete = completeWriter.getText();
 		
 		boolean empty;
+		
+		if (getGameTitle.length() < 20)
+			getGameTitle = getGameTitle.format("%-55s", getGameTitle);
+		if (getGameTitle.length() < 45 && getGameTitle.length() > 20)
+			getGameTitle = getGameTitle.format("%-45s", getGameTitle);
 		
 		//this checks whether or not any of the text fields are empty, and if so, it doesn't add the game.
 		if (getGameTitle.isEmpty() || getSystem.isEmpty() || isBeaten.isEmpty() || isComplete.isEmpty())
@@ -599,6 +613,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	}
 	
 	//This action performed function handles when you switch systems
+	@SuppressWarnings("static-access")
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
@@ -614,14 +629,20 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			ps = (PreparedStatement) conn.prepareStatement(query);
 			result_System = ps.executeQuery(query);
 			txtarea.setText(null);
-			txtarea.append("Game Title" + "\t" + "Game System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n");
-			
+			txtarea.append("Game Title                                             " + 
+					"\t" + "System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n" + "\n");			
 			while (result_System.next())
 			{
 				String Game_Title = result_System.getString("Game_Title");
 				String Game_System = result_System.getString("Game_System");
 				String Complete = result_System.getString("Complete");
 				String Game_Beaten = result_System.getString("Game_Beaten");
+				
+				if (Game_Title.length() < 20)
+					Game_Title = Game_Title.format("%-55s", Game_Title);
+				if (Game_Title.length() < 45)
+					Game_Title = Game_Title.format("%-45s", Game_Title);
+				
 				txtarea.append(Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");			
 			}
 		}
@@ -649,6 +670,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		LoadDriver loadDriver = new LoadDriver();
 		txtarea.setEditable(false);
 		txtarea.setVisible(true);
+		pane.setPreferredSize(new Dimension(550, 1000));
 		frame.setResizable(true);
 		frame.setBackground(Color.WHITE);
 		frame.add(pane, BorderLayout.WEST);
