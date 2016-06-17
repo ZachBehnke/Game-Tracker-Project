@@ -27,7 +27,7 @@ import com.mysql.jdbc.PreparedStatement;
 public class LoadDriver extends JPanel implements DocumentListener, ActionListener
 {
 	//This is where I initialize all of the variables being used throughout the program.
-	static JFrame frame = new JFrame("Game Tracker Project");
+	//static JFrame frame = new JFrame("Game Tracker Project");
 	static JTextArea txtarea = new JTextArea();
 	static JScrollPane pane = new JScrollPane(txtarea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	
@@ -81,6 +81,9 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 	//Basic constructor to run methods and set the layout.
 	public LoadDriver() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
+		txtarea.setEditable(false);
+		txtarea.setVisible(true);
+		
 		setLayout(null);
 		connectionThings();
 		buttonDisplay();
@@ -104,7 +107,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
             //Checks for a connection, then runs a query.
 			if (conn != null)
 				System.out.println("Connected");
-			query = "Select * from MasterGameList";
+			query = "Select * from MasterGameList Order By Game_Title";
 			statement = conn.createStatement();
 			result = statement.executeQuery(query);
 			txtarea.append("Game Title                                             " + 
@@ -620,9 +623,9 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		@SuppressWarnings("unchecked")
 		JComboBox<String> cb = (JComboBox<String>) e.getSource();
         String systemName = (String) cb.getSelectedItem();
-		query = ("Select * from MasterGameList Where game_system = " + "'" + systemName + "'" + ";");
+		query = ("Select * from MasterGameList Where game_system = " + "'" + systemName + "'" + "Order By Game_Title" + ";");
 		if (systemName == "All")
-			query = ("Select * from MasterGameList");
+			query = ("Select * from MasterGameList Order By Game_Title");
 		PreparedStatement ps = null;
 		try 
 		{
@@ -659,24 +662,5 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
         	}
         	catch (Exception ignored) {}
         }
-	}
-	
-	//This is the main function used to run the application.
-	public static void main (String[] args) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
-	{
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int width = (int) screenSize.getWidth();
-		int height = (int) screenSize.getHeight();
-		LoadDriver loadDriver = new LoadDriver();
-		txtarea.setEditable(false);
-		txtarea.setVisible(true);
-		pane.setPreferredSize(new Dimension(550, 1000));
-		frame.setResizable(true);
-		frame.setBackground(Color.WHITE);
-		frame.add(pane, BorderLayout.WEST);
-		frame.add(loadDriver);
-		frame.setSize(width, height);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
 	}
 }
