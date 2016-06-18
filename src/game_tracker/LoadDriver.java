@@ -15,16 +15,21 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.*;
 
 import com.mysql.jdbc.PreparedStatement;
 
 @SuppressWarnings("serial")
-public class LoadDriver extends JPanel implements DocumentListener, ActionListener
+public class LoadDriver extends JPanel implements DocumentListener
 {
 	//This is where I initialize all of the variables being used throughout the program.
 	//static JFrame frame = new JFrame("Game Tracker Project");
@@ -89,11 +94,11 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		buttonDisplay();
 		
 		gameSystems.setSelectedIndex(indexOfSystems);
-		gameSystems.addActionListener(this);
-		gameSystems.setBounds(35, 285, 100, 25);
-		pickSystem.setBounds(35, 260, 200, 25);
+		gameSystems.setBounds(35, 325, 100, 25);
+		pickSystem.setBounds(35, 300, 200, 25);
 		add(gameSystems);
 		add(pickSystem);
+		pickSystem();
 	}
 	
 	//This method just set up the basic connection to the mySQL server.
@@ -110,6 +115,7 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			query = "Select * from MasterGameList Order By Game_Title";
 			statement = conn.createStatement();
 			result = statement.executeQuery(query);
+			
 			txtarea.append("Game Title                                             " + 
 			"\t" + "System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n" + "\n");
 			
@@ -149,6 +155,9 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		JButton deleteGameButton = new JButton("Delete a Game");
 		JButton updateGameButton = new JButton("Update a Game");
 		JButton countButton = new JButton("Total # of Games");
+		JButton saveButton = new JButton("Save Current Data");
+		JButton loadButton = new JButton("Load File");
+		JButton deleteButton = new JButton("Clear Table");
 		
 		searchButton.setBounds(35, 25, 150, 25);
 		addGameButton.setBounds(35, 60, 150, 25);
@@ -156,6 +165,9 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		deleteGameButton.setBounds(35, 130, 150, 25);
 		updateGameButton.setBounds(35, 165, 150, 25);
 		countButton.setBounds(35, 200, 150, 25);
+		saveButton.setBounds(35, 235, 150, 25);
+		loadButton.setBounds(35, 270, 150, 25);
+		deleteButton.setBounds(35, 500, 150, 25);
 		
 		searchTextBox.setBounds(200, 25, 200, 25);
 		searchTextBox.getDocument().addDocumentListener(this);
@@ -427,9 +439,52 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 			public void actionPerformed(ActionEvent e)
 			{
 				countNumber.setBounds(200, 200, 100, 25);
-				countNumber.setText(String.valueOf(txtarea.getLineCount() - 2));
+				countNumber.setText(String.valueOf(txtarea.getLineCount() - 3));
 			}
 		});
+		
+		saveButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				saveGameFile();
+			}
+		});
+		
+		loadButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					loadGameFile();
+				} catch (SQLException e1) 
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		deleteButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				PreparedStatement stmt;
+				query = ("Delete from MasterGameList");
+				try {
+					stmt = (PreparedStatement) conn.prepareStatement(query);
+					@SuppressWarnings("unused")
+					int deleteGameDB = stmt.executeUpdate(query);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		}
+		);
 		
 		//adds all of the components to the frame 
 		add(searchButton);
@@ -438,6 +493,9 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		add(deleteGameButton);
 		add(updateGameButton);
 		add(countButton);
+		add(saveButton);
+		add(loadButton);
+		add(deleteButton);
 		add(searchTextBox);
 		add(stopSearch);
 		add(randomGame);
@@ -615,52 +673,129 @@ public class LoadDriver extends JPanel implements DocumentListener, ActionListen
 		search();
 	}
 	
-	//This action performed function handles when you switch systems
-	@SuppressWarnings("static-access")
-	@Override
-	public void actionPerformed(ActionEvent e)
+	public void loadGameFile() throws SQLException
 	{
-		@SuppressWarnings("unchecked")
-		JComboBox<String> cb = (JComboBox<String>) e.getSource();
-        String systemName = (String) cb.getSelectedItem();
-		query = ("Select * from MasterGameList Where game_system = " + "'" + systemName + "'" + "Order By Game_Title" + ";");
-		if (systemName == "All")
-			query = ("Select * from MasterGameList Order By Game_Title");
-		PreparedStatement ps = null;
-		try 
+		FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("Text File", "txt");
+		final JFileChooser loadFileChooser = new JFileChooser();
+		loadFileChooser.setApproveButtonText("Load");
+		loadFileChooser.setDialogTitle("Load File");
+		loadFileChooser.setFileFilter(extensionFilter);
+		int actionDialog = loadFileChooser.showOpenDialog(this);
+		
+		if (actionDialog != JFileChooser.APPROVE_OPTION)
+			return;
+		
+		File loadFile = loadFileChooser.getSelectedFile();
+		String filePath = loadFile.getAbsolutePath();
+		filePath = filePath.replace("\\", "/");
+		
+		query  = ("LOAD DATA INFILE " + "'" + filePath + "'" + " INTO TABLE MasterGameList LINES TERMINATED BY '\r\n' IGNORE 2 LINES;");
+		
+		Statement stmt;
+		
+		try
 		{
-			ps = (PreparedStatement) conn.prepareStatement(query);
-			result_System = ps.executeQuery(query);
-			txtarea.setText(null);
-			txtarea.append("Game Title                                             " + 
-					"\t" + "System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n" + "\n");			
-			while (result_System.next())
+			stmt = conn.createStatement();
+			stmt.executeUpdate(query);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			stmt = null;
+		}
+	}
+	
+	public void saveGameFile()
+	{
+		FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("Text File", "txt");
+		final JFileChooser saveAsFileChooser = new JFileChooser();
+		saveAsFileChooser.setApproveButtonText("Save");
+		saveAsFileChooser.setDialogTitle("Save Game List");
+		saveAsFileChooser.setFileFilter(extensionFilter);
+		int actionDialog = saveAsFileChooser.showOpenDialog(this);
+		
+		if (actionDialog != JFileChooser.APPROVE_OPTION)
+			return;
+		
+		File gameFile = saveAsFileChooser.getSelectedFile();
+		
+		if (!gameFile.getName().endsWith(".txt"))
+			gameFile = new File(gameFile.getAbsolutePath() + ".txt");
+		
+		BufferedWriter outFile = null;
+		try
+		{
+			outFile = new BufferedWriter(new FileWriter(gameFile));
+			txtarea.write(outFile);
+		}
+		catch (IOException ex)
+		{
+			ex.printStackTrace();
+		}	
+		finally
+		{
+			if (outFile != null)
 			{
-				String Game_Title = result_System.getString("Game_Title");
-				String Game_System = result_System.getString("Game_System");
-				String Complete = result_System.getString("Complete");
-				String Game_Beaten = result_System.getString("Game_Beaten");
-				
-				if (Game_Title.length() < 20)
-					Game_Title = Game_Title.format("%-55s", Game_Title);
-				if (Game_Title.length() < 45)
-					Game_Title = Game_Title.format("%-45s", Game_Title);
-				
-				txtarea.append(Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");			
-			}
+				try
+				{
+					outFile.close();
+				}
+				catch (IOException e) {}
+			}	
 		}
-		catch (SQLException e1) 
+	}
+	
+	public void pickSystem()
+	{
+		gameSystems.addActionListener(new ActionListener()
 		{
-			e1.printStackTrace();
-		}
-        finally
-        {
-        	try 
-        	{ 
-        		ps.close();
-        		result_System.close();
-        	}
-        	catch (Exception ignored) {}
-        }
+			@Override
+			@SuppressWarnings("static-access")
+			public void actionPerformed(ActionEvent e) 
+			{
+				@SuppressWarnings("unchecked")
+				JComboBox<String> cb = (JComboBox<String>) e.getSource();
+		        String systemName = (String) cb.getSelectedItem();
+				query = ("Select * from MasterGameList Where game_system = " + "'" + systemName + "'" + "Order By Game_Title" + ";");
+				if (systemName == "All")
+					query = ("Select * from MasterGameList Order By Game_Title");
+				PreparedStatement ps = null;
+				try 
+				{
+					ps = (PreparedStatement) conn.prepareStatement(query);
+					result_System = ps.executeQuery(query);
+					txtarea.setText(null);
+					txtarea.append("Game Title                                             " + 
+							"\t" + "System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n" + "\n");			
+					while (result_System.next())
+					{
+						String Game_Title = result_System.getString("Game_Title");
+						String Game_System = result_System.getString("Game_System");
+						String Complete = result_System.getString("Complete");
+						String Game_Beaten = result_System.getString("Game_Beaten");
+						
+						if (Game_Title.length() < 20)
+							Game_Title = Game_Title.format("%-55s", Game_Title);
+						if (Game_Title.length() < 45)
+							Game_Title = Game_Title.format("%-45s", Game_Title);
+						
+						txtarea.append(Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");			
+					}
+				}
+				catch (SQLException e1) 
+				{
+					e1.printStackTrace();
+				}
+		        finally
+		        {
+		        	try 
+		        	{ 
+		        		ps.close();
+		        		result_System.close();
+		        	}
+		        	catch (Exception ignored) {}
+		        }
+			}
+		});
 	}
 }

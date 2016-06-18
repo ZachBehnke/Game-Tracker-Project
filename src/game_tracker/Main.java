@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.sql.SQLException;
-
 import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
