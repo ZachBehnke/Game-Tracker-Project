@@ -102,22 +102,27 @@ public class LoadDriver extends JPanel implements DocumentListener
 	}
 	
 	//This method just set up the basic connection to the mySQL server.
-	@SuppressWarnings("static-access")
 	public void connectionThings() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{	
-		try 
-		{	
             Class.forName("com.mysql.jdbc.Driver").newInstance(); 
 			
             //Checks for a connection, then runs a query.
 			if (conn != null)
 				System.out.println("Connected");
+			
+			selectQuery();
+	}
+	@SuppressWarnings("static-access")
+	public void selectQuery() throws SQLException
+	{
+		try
+		{
+			txtarea.append("Game Title                                             " + 
+					"\t" + "System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n" + "\n");
+			
 			query = "Select * from MasterGameList Order By Game_Title";
 			statement = conn.createStatement();
 			result = statement.executeQuery(query);
-			
-			txtarea.append("Game Title                                             " + 
-			"\t" + "System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n" + "\n");
 			
 			//This appends all the games from MasterGameList to the text area, where everything is seen.
 			while (result.next())
@@ -132,12 +137,6 @@ public class LoadDriver extends JPanel implements DocumentListener
 					Game_Title = Game_Title.format("%-45s", Game_Title);
 				txtarea.append(Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");
 			}
-		}
-		catch (SQLException ex) 
-		{
-			System.out.println("SQLException: " + ex.getMessage());
-		    System.out.println("SQLState: " + ex.getSQLState());
-		    System.out.println("VendorError: " + ex.getErrorCode());
 		}
 		finally
 		{
@@ -471,17 +470,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 			@Override
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				PreparedStatement stmt;
-				query = ("Delete from MasterGameList");
-				try {
-					stmt = (PreparedStatement) conn.prepareStatement(query);
-					@SuppressWarnings("unused")
-					int deleteGameDB = stmt.executeUpdate(query);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
+				clearDB();
 			}
 		}
 		);
@@ -510,6 +499,23 @@ public class LoadDriver extends JPanel implements DocumentListener
 		add(deleteGame);
 		add(deleteWriter);
 		add(countNumber);
+	}
+	
+	public void clearDB()
+	{	
+		PreparedStatement stmt;
+		query = ("Delete from MasterGameList");
+		try 
+		{
+			stmt = (PreparedStatement) conn.prepareStatement(query);
+			@SuppressWarnings("unused")
+			int deleteGameDB = stmt.executeUpdate(query);
+			txtarea.setText(null);
+		} catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		
 	}
 	
 	//this function searches through the text area to find the game you type into the text box.
@@ -674,7 +680,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 	}
 	
 	public void loadGameFile() throws SQLException
-	{
+	{	
+		clearDB();
 		FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("Text File", "txt");
 		final JFileChooser loadFileChooser = new JFileChooser();
 		loadFileChooser.setApproveButtonText("Load");
@@ -697,6 +704,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 		{
 			stmt = conn.createStatement();
 			stmt.executeUpdate(query);
+			selectQuery();
 		}
 		catch (SQLException e)
 		{
