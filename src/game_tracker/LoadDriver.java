@@ -112,7 +112,6 @@ public class LoadDriver extends JPanel implements DocumentListener
 			
 			selectQuery();
 	}
-	
 	@SuppressWarnings("static-access")
 	public void selectQuery() throws SQLException
 	{
