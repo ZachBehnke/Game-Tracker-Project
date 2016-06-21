@@ -32,15 +32,12 @@ import com.mysql.jdbc.PreparedStatement;
 public class LoadDriver extends JPanel implements DocumentListener
 {
 	//This is where I initialize all of the variables being used throughout the program.
-	//static JFrame frame = new JFrame("Game Tracker Project");
 	static JTextArea txtarea = new JTextArea();
 	static JScrollPane pane = new JScrollPane(txtarea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	
 	JTextField searchTextBox = new JTextField(25);
 	JTextField gameWriter = new JTextField(25);
 	JTextField systemWriter = new JTextField(25);
-	JTextField completeWriter = new JTextField(25);
-	JTextField beatenWriter = new JTextField(25);
 	JTextField deleteWriter = new JTextField(25);
 	
 	public Statement statement = null;
@@ -55,6 +52,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 	boolean addingGame = true;
 	boolean deletingGame = true;
 	boolean updatingGame = true;
+	public static boolean active = true;
 	
 	String getGameTitle, getSystem, isComplete, isBeaten, getDeletedGame;
 	
@@ -75,13 +73,21 @@ public class LoadDriver extends JPanel implements DocumentListener
 	JLabel beatenYN = new JLabel("Have you beaten this game?");
 	JLabel pickSystem = new JLabel("Pick a System to see Games for it.");
 	JLabel deleteGame = new JLabel("Write the Game's Title to delete it.");
-	
+		
 	//Used to select your system of choice.
 	int indexOfSystems = 5;
 	String[] game_Systems = {"All", "PS3", "PS4", "Wii U", "Wii", "GCN", 
 			"NES", "SNES", "N64", "3DS", "Vita", "DS", "DC", "PS1", 
 			"PS2", "Xbox", "Saturn", "GEN"};
 	JComboBox<String> gameSystems = new JComboBox<String>(game_Systems);
+	
+	int indexComplete = 2;
+	String[] game_complete = {"Yes", "No"};
+	JComboBox<String> completeGame = new JComboBox<String>(game_complete);
+	
+	int indexBeaten = 2;
+	String[] game_beaten = {"Yes", "No"};
+	JComboBox<String> beatenGame = new JComboBox<String>(game_beaten);
 		
 	//Basic constructor to run methods and set the layout.
 	public LoadDriver() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
@@ -94,10 +100,13 @@ public class LoadDriver extends JPanel implements DocumentListener
 		buttonDisplay();
 		
 		gameSystems.setSelectedIndex(indexOfSystems);
-		gameSystems.setBounds(35, 325, 100, 25);
-		pickSystem.setBounds(35, 300, 200, 25);
+		gameSystems.setBounds(35, 425, 100, 25);
+		pickSystem.setBounds(35, 400, 200, 25);
+		
+		add(completeGame);
 		add(gameSystems);
 		add(pickSystem);
+		
 		pickSystem();
 	}
 	
@@ -112,6 +121,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 			
 			selectQuery();
 	}
+	
 	@SuppressWarnings("static-access")
 	public void selectQuery() throws SQLException
 	{
@@ -157,7 +167,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 		JButton saveButton = new JButton("Save Current Data");
 		JButton loadButton = new JButton("Load File");
 		JButton deleteButton = new JButton("Clear Table");
-		
+		JButton refreshButton = new JButton("Refresh Table");
+			
 		searchButton.setBounds(35, 25, 150, 25);
 		addGameButton.setBounds(35, 60, 150, 25);
 		randomButton.setBounds(35, 95, 150, 25);
@@ -166,7 +177,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 		countButton.setBounds(35, 200, 150, 25);
 		saveButton.setBounds(35, 235, 150, 25);
 		loadButton.setBounds(35, 270, 150, 25);
-		deleteButton.setBounds(35, 500, 150, 25);
+		deleteButton.setBounds(35, 305, 150, 25);
+		refreshButton.setBounds(35, 340, 150, 25);
 		
 		searchTextBox.setBounds(200, 25, 200, 25);
 		searchTextBox.getDocument().addDocumentListener(this);
@@ -190,14 +202,14 @@ public class LoadDriver extends JPanel implements DocumentListener
 		completeYN.setBounds(200, 90, 300, 25);
 		completeYN.setVisible(false);
 		
-		completeWriter.setBounds(375, 90, 100, 25);
-		completeWriter.setVisible(false);
+		completeGame.setBounds(375, 90, 100, 25);
+		completeGame.setVisible(false);
 		
 		beatenYN.setBounds(200, 130, 300, 25);
 		beatenYN.setVisible(false);
 		
-		beatenWriter.setBounds(375, 130, 100, 25);
-		beatenWriter.setVisible(false);
+		beatenGame.setBounds(375, 130, 100, 25);
+		beatenGame.setVisible(false);
 		
 		deleteGame.setBounds(200, 115, 300, 25);
 		deleteGame.setVisible(false);
@@ -330,12 +342,10 @@ public class LoadDriver extends JPanel implements DocumentListener
 					beatenYN.setVisible(true);
 					gameWriter.setVisible(true);
 					systemWriter.setVisible(true);
-					completeWriter.setVisible(true);
-					beatenWriter.setVisible(true);
+					completeGame.setVisible(true);
+					beatenGame.setVisible(true);
 					gameWriter.setText(null);
 					systemWriter.setText(null);
-					completeWriter.setText(null);
-					beatenWriter.setText(null);
 					randomGame.setVisible(false);
 					countNumber.setVisible(false);
 					searchTextBox.setVisible(false);
@@ -358,8 +368,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 					beatenYN.setVisible(false);
 					gameWriter.setVisible(false);
 					systemWriter.setVisible(false);
-					completeWriter.setVisible(false);
-					beatenWriter.setVisible(false);
+					completeGame.setVisible(false);
+					beatenGame.setVisible(false);
 					randomGame.setText("");
 					randomGame.setVisible(true);
 					countNumber.setText("");
@@ -389,8 +399,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 					gameWriter.setText("");
 					updatingGame = false;
 					gameWriter.setVisible(true);
-					completeWriter.setVisible(true);
-					beatenWriter.setVisible(true);
+					completeGame.setVisible(true);
+					beatenGame.setVisible(true);
 					gameWrite.setVisible(true);
 					completeYN.setVisible(true);
 					beatenYN.setVisible(true);
@@ -407,8 +417,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 				{
 					updatingGame = true;
 					gameWriter.setVisible(false);
-					completeWriter.setVisible(false);
-					beatenWriter.setVisible(false);
+					completeGame.setVisible(false);
+					beatenGame.setVisible(false);
 					gameWrite.setVisible(false);
 					completeYN.setVisible(false);
 					beatenYN.setVisible(false);
@@ -456,21 +466,37 @@ public class LoadDriver extends JPanel implements DocumentListener
 			public void actionPerformed(ActionEvent e) 
 			{
 				try 
-				{
-					loadGameFile();
-				} catch (SQLException e1) 
-				{
-					e1.printStackTrace();
-				}
+					{
+						loadGameFile();
+					} catch (SQLException e1) 
+					{
+						e1.printStackTrace();
+					}
 			}
 		});
 		
 		deleteButton.addActionListener(new ActionListener()
 		{
 			@Override
-			public void actionPerformed(ActionEvent arg0) 
+			public void actionPerformed(ActionEvent e) 
 			{
 				clearDB();
+			}
+		}
+		);
+		
+		refreshButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				txtarea.setText(null);
+				try {
+					selectQuery();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		}
 		);
@@ -485,6 +511,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 		add(saveButton);
 		add(loadButton);
 		add(deleteButton);
+		add(refreshButton);
 		add(searchTextBox);
 		add(stopSearch);
 		add(randomGame);
@@ -492,8 +519,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 		add(gameWrite);
 		add(gameWriter);
 		add(systemWriter);
-		add(completeWriter);
-		add(beatenWriter);
+		add(completeGame);
+		add(beatenGame);
 		add(completeYN);
 		add(beatenYN);
 		add(deleteGame);
@@ -505,17 +532,16 @@ public class LoadDriver extends JPanel implements DocumentListener
 	{	
 		PreparedStatement stmt;
 		query = ("Delete from MasterGameList");
+		txtarea.setText(null);
 		try 
 		{
 			stmt = (PreparedStatement) conn.prepareStatement(query);
 			@SuppressWarnings("unused")
 			int deleteGameDB = stmt.executeUpdate(query);
-			txtarea.setText(null);
 		} catch (SQLException e) 
 		{
 			e.printStackTrace();
 		}
-		
 	}
 	
 	//this function searches through the text area to find the game you type into the text box.
@@ -533,7 +559,7 @@ public class LoadDriver extends JPanel implements DocumentListener
         }
                  
         String content = txtarea.getText();
-        int index = content.indexOf(s, 0);
+        int index = content.indexOf(s, 0);        
         
         if (index >= 0) 
         {   
@@ -561,11 +587,13 @@ public class LoadDriver extends JPanel implements DocumentListener
 	@SuppressWarnings("static-access")
 	public void addAGame() throws SQLException, BadLocationException
 	{
+		choose();
+		
 		getGameTitle = gameWriter.getText().replace("'","''");
 		getSystem = systemWriter.getText();
-		isBeaten = beatenWriter.getText();
-		isComplete = completeWriter.getText();
-		
+		isBeaten = (String) beatenGame.getSelectedItem();
+		isComplete = (String) completeGame.getSelectedItem();
+						
 		boolean empty;
 		
 		if (getGameTitle.length() < 20)
@@ -640,9 +668,11 @@ public class LoadDriver extends JPanel implements DocumentListener
 	
 	public void updateAGame() throws SQLException
 	{	
+		choose();
+		
 		String gameTitle = gameWriter.getText().replace("'", "''");
-		String isBeaten = beatenWriter.getText();
-		String isComplete = completeWriter.getText();
+		String isBeaten = (String) beatenGame.getSelectedItem();
+		String isComplete = (String) completeGame.getSelectedItem();
 		
 		query = ("Update MasterGameList Set game_beaten =" + "'" + isBeaten  + "'" + ", complete =" + "'" + isComplete + "'" + "where game_title =" + "'" + gameTitle + "'" + ";");
 		
@@ -681,7 +711,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 	
 	public void loadGameFile() throws SQLException
 	{	
-		clearDB();
+		//clearDB();
+
 		FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("Text File", "txt");
 		final JFileChooser loadFileChooser = new JFileChooser();
 		loadFileChooser.setApproveButtonText("Load");
@@ -691,6 +722,9 @@ public class LoadDriver extends JPanel implements DocumentListener
 		
 		if (actionDialog != JFileChooser.APPROVE_OPTION)
 			return;
+		
+		if (actionDialog == JFileChooser.APPROVE_OPTION)
+			clearDB();
 		
 		File loadFile = loadFileChooser.getSelectedFile();
 		String filePath = loadFile.getAbsolutePath();
@@ -803,6 +837,31 @@ public class LoadDriver extends JPanel implements DocumentListener
 		        	}
 		        	catch (Exception ignored) {}
 		        }
+			}
+		});
+	}
+	
+	public void choose()
+	{		
+		completeGame.addActionListener(new ActionListener()
+		{
+			@SuppressWarnings("unchecked")
+			public void actionPerformed(ActionEvent e)
+			{
+				JComboBox<String> cb = (JComboBox<String>) e.getSource();
+		        @SuppressWarnings("unused")
+				String completed = (String) cb.getSelectedItem();
+			}
+		});
+		
+		beatenGame.addActionListener(new ActionListener()
+		{
+			@SuppressWarnings("unchecked")
+			public void actionPerformed(ActionEvent e)
+			{
+				JComboBox<String> cb = (JComboBox<String>) e.getSource();
+		        @SuppressWarnings("unused")
+				String beaten = (String) cb.getSelectedItem();
 			}
 		});
 	}
