@@ -37,7 +37,6 @@ public class LoadDriver extends JPanel implements DocumentListener
 	
 	JTextField searchTextBox = new JTextField(25);
 	JTextField gameWriter = new JTextField(25);
-	JTextField systemWriter = new JTextField(25);
 	JTextField deleteWriter = new JTextField(25);
 	
 	public Statement statement = null;
@@ -76,7 +75,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 		
 	//Used to select your system of choice.
 	int indexOfSystems = 5;
-	String[] game_Systems = {"All", "PS3", "PS4", "Wii U", "Wii", "GCN", 
+	String[] game_Systems = {"PS3", "PS4", "Wii U", "Wii", "GCN", 
 			"NES", "SNES", "N64", "3DS", "Vita", "DS", "DC", "PS1", 
 			"PS2", "Xbox", "Saturn", "GEN"};
 	JComboBox<String> gameSystems = new JComboBox<String>(game_Systems);
@@ -96,6 +95,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 		txtarea.setVisible(true);
 		
 		setLayout(null);
+		
 		connectionThings();
 		buttonDisplay();
 		
@@ -107,7 +107,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 		add(gameSystems);
 		add(pickSystem);
 		
-		pickSystem();
+		//if (addingGame == true)
+		//	pickSystem();
 	}
 	
 	//This method just set up the basic connection to the mySQL server.
@@ -195,9 +196,6 @@ public class LoadDriver extends JPanel implements DocumentListener
 		
 		systemSelect.setBounds(200, 55, 300, 25);
 		systemSelect.setVisible(false);
-		
-		systemWriter.setBounds(375, 55, 100, 25);
-		systemWriter.setVisible(false);
 		
 		completeYN.setBounds(200, 90, 300, 25);
 		completeYN.setVisible(false);
@@ -336,16 +334,15 @@ public class LoadDriver extends JPanel implements DocumentListener
 				if (addingGame == true)
 				{
 					addingGame = false;
+					gameSystems.setBounds(375, 55, 100, 25);
 					systemSelect.setVisible(true);
 					gameWrite.setVisible(true);
 					completeYN.setVisible(true);
 					beatenYN.setVisible(true);
 					gameWriter.setVisible(true);
-					systemWriter.setVisible(true);
 					completeGame.setVisible(true);
 					beatenGame.setVisible(true);
 					gameWriter.setText(null);
-					systemWriter.setText(null);
 					randomGame.setVisible(false);
 					countNumber.setVisible(false);
 					searchTextBox.setVisible(false);
@@ -367,7 +364,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 					completeYN.setVisible(false);
 					beatenYN.setVisible(false);
 					gameWriter.setVisible(false);
-					systemWriter.setVisible(false);
+					gameSystems.setBounds(35, 425, 100, 25);
 					completeGame.setVisible(false);
 					beatenGame.setVisible(false);
 					randomGame.setText("");
@@ -518,7 +515,6 @@ public class LoadDriver extends JPanel implements DocumentListener
 		add(systemSelect);
 		add(gameWrite);
 		add(gameWriter);
-		add(systemWriter);
 		add(completeGame);
 		add(beatenGame);
 		add(completeYN);
@@ -590,27 +586,27 @@ public class LoadDriver extends JPanel implements DocumentListener
 		choose();
 		
 		getGameTitle = gameWriter.getText().replace("'","''");
-		getSystem = systemWriter.getText();
+		getSystem = (String) gameSystems.getSelectedItem();
 		isBeaten = (String) beatenGame.getSelectedItem();
 		isComplete = (String) completeGame.getSelectedItem();
 						
-		boolean empty;
-		
-		if (getGameTitle.length() < 20)
-			getGameTitle = getGameTitle.format("%-55s", getGameTitle);
-		if (getGameTitle.length() < 45 && getGameTitle.length() > 20)
-			getGameTitle = getGameTitle.format("%-45s", getGameTitle);
-		
+		boolean empty = false;
+				
 		//this checks whether or not any of the text fields are empty, and if so, it doesn't add the game.
-		if (getGameTitle.isEmpty() || getSystem.isEmpty() || isBeaten.isEmpty() || isComplete.isEmpty())
+		if (gameWriter.getText().isEmpty())
 		{
 			empty = true;
 			query = ("Delete from MasterGameList where Game_Title = ''");
 		}
-			
+		
 		//inserts the game, with all its respective information
 		else
 		{
+			if (getGameTitle.length() < 20)
+				getGameTitle = getGameTitle.format("%-55s", getGameTitle);
+			if (getGameTitle.length() < 45 && getGameTitle.length() > 20)
+				getGameTitle = getGameTitle.format("%-45s", getGameTitle);
+			
 			empty = false;
 		
 			query = ("Insert Into MasterGameList (Game_Title, Game_System, Complete, Game_Beaten) values "
@@ -799,8 +795,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 				JComboBox<String> cb = (JComboBox<String>) e.getSource();
 		        String systemName = (String) cb.getSelectedItem();
 				query = ("Select * from MasterGameList Where game_system = " + "'" + systemName + "'" + "Order By Game_Title" + ";");
-				if (systemName == "All")
-					query = ("Select * from MasterGameList Order By Game_Title");
+				
 				PreparedStatement ps = null;
 				try 
 				{
@@ -820,7 +815,6 @@ public class LoadDriver extends JPanel implements DocumentListener
 							Game_Title = Game_Title.format("%-55s", Game_Title);
 						if (Game_Title.length() < 45)
 							Game_Title = Game_Title.format("%-45s", Game_Title);
-						
 						txtarea.append(Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");			
 					}
 				}
@@ -862,6 +856,17 @@ public class LoadDriver extends JPanel implements DocumentListener
 				JComboBox<String> cb = (JComboBox<String>) e.getSource();
 		        @SuppressWarnings("unused")
 				String beaten = (String) cb.getSelectedItem();
+			}
+		});
+		
+		gameSystems.addActionListener(new ActionListener()
+		{
+			@SuppressWarnings("unchecked")
+			public void actionPerformed(ActionEvent e)
+			{
+				JComboBox<String> cb = (JComboBox<String>) e.getSource();
+		        @SuppressWarnings("unused")
+				String system = (String) cb.getSelectedItem();
 			}
 		});
 	}
