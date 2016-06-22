@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -107,8 +108,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 		add(gameSystems);
 		add(pickSystem);
 		
-		//if (addingGame == true)
-		//	pickSystem();
+		pickSystem();
 	}
 	
 	//This method just set up the basic connection to the mySQL server.
@@ -180,6 +180,17 @@ public class LoadDriver extends JPanel implements DocumentListener
 		loadButton.setBounds(35, 270, 150, 25);
 		deleteButton.setBounds(35, 305, 150, 25);
 		refreshButton.setBounds(35, 340, 150, 25);
+		
+		searchButton.setToolTipText("Search for a game.");
+		addGameButton.setToolTipText("Add a game to the list.");
+		randomButton.setToolTipText("Picks a random game that hasn't been beaten.");
+		deleteGameButton.setToolTipText("Delete a game from the list.");
+		updateGameButton.setToolTipText("Updates a game's info.");
+		countButton.setToolTipText("Counts the number of games in the list.");
+		saveButton.setToolTipText("Saves the list in a text file.");
+		loadButton.setToolTipText("Loads a text file in the table.");
+		deleteButton.setToolTipText("Clears the table for a new list.");
+		refreshButton.setToolTipText("Refreshes the table.");
 		
 		searchTextBox.setBounds(200, 25, 200, 25);
 		searchTextBox.getDocument().addDocumentListener(this);
