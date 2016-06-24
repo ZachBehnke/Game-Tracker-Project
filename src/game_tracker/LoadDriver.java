@@ -77,7 +77,6 @@ public class LoadDriver extends JPanel implements DocumentListener
 	//Used to select your system of choice.
 	int indexOfSystems;
 	ArrayList<String> systems = new ArrayList<String>();
-	String[] numberSystems = systems.toArray(new String[systems.size()]);
 	String[] game_Systems = 
 		{"PS3", "PS4", "Wii U", "Wii", "GCN", 
 		"NES", "SNES", "N64", "3DS", "Vita", "DS", "DC", "PS1", 
@@ -91,7 +90,13 @@ public class LoadDriver extends JPanel implements DocumentListener
 	int indexBeaten = 2;
 	String[] game_beaten = {"Yes", "No"};
 	JComboBox<String> beatenGame = new JComboBox<String>(game_beaten);
-		
+	
+	String[] numberSystems = systems.toArray(new String[systems.size()]);
+	JComboBox<String> numberOfSystems = new JComboBox<String>(numberSystems);
+	
+	DefaultComboBoxModel<String> gameSystemss = new DefaultComboBoxModel<String>();
+	JComboBox<String> jcb = new JComboBox<String>(gameSystemss);
+	
 	//Basic constructor to run methods and set the layout
 	public LoadDriver() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
@@ -103,14 +108,34 @@ public class LoadDriver extends JPanel implements DocumentListener
 		connectionThings();
 		buttonDisplay();
 			
-		//gameSystems.setSelectedIndex(indexOfSystems);
 		gameSystems.setBounds(35, 475, 100, 25);
 		pickSystem.setBounds(35, 450, 200, 25);
 				
+		gameSystemss.addElement("PS3");
+		gameSystemss.addElement("PS4");
+		gameSystemss.addElement("PS1");
 		
+		
+		JButton testButton = new JButton("Remove an item");
+		testButton.setBounds(35, 575, 100, 25);
+		
+		testButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				gameSystemss.removeElement("PS1");
+			}
+		});
+		
+		jcb.setBounds(35, 525, 100, 25);
+
 		add(completeGame);
 		add(gameSystems);
+		add(jcb);
 		add(pickSystem);
+		add(numberOfSystems);
+		add(testButton);
 		pickSystem();
 	}
 	
