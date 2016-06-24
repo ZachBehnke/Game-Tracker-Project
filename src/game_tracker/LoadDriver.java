@@ -13,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedWriter;
@@ -20,7 +21,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -67,7 +67,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 	JLabel randomGame = new JLabel("");
 	JLabel countNumber = new JLabel("");
 	
-	JLabel systemSelect = new JLabel("Write the System Here.");
+	JLabel systemSelect = new JLabel("Select the System.");
 	JLabel gameWrite = new JLabel("Write Game's Title Here.");
 	JLabel completeYN = new JLabel("Is the game complete?");
 	JLabel beatenYN = new JLabel("Have you beaten this game?");
@@ -75,10 +75,13 @@ public class LoadDriver extends JPanel implements DocumentListener
 	JLabel deleteGame = new JLabel("Write the Game's Title to delete it.");
 		
 	//Used to select your system of choice.
-	int indexOfSystems = 5;
-	String[] game_Systems = {"PS3", "PS4", "Wii U", "Wii", "GCN", 
-			"NES", "SNES", "N64", "3DS", "Vita", "DS", "DC", "PS1", 
-			"PS2", "Xbox", "Saturn", "GEN"};
+	int indexOfSystems;
+	ArrayList<String> systems = new ArrayList<String>();
+	String[] numberSystems = systems.toArray(new String[systems.size()]);
+	String[] game_Systems = 
+		{"PS3", "PS4", "Wii U", "Wii", "GCN", 
+		"NES", "SNES", "N64", "3DS", "Vita", "DS", "DC", "PS1", 
+		"PS2", "Xbox", "Saturn", "GEN"};
 	JComboBox<String> gameSystems = new JComboBox<String>(game_Systems);
 	
 	int indexComplete = 2;
@@ -89,7 +92,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 	String[] game_beaten = {"Yes", "No"};
 	JComboBox<String> beatenGame = new JComboBox<String>(game_beaten);
 		
-	//Basic constructor to run methods and set the layout.
+	//Basic constructor to run methods and set the layout
 	public LoadDriver() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
 		txtarea.setEditable(false);
@@ -99,15 +102,15 @@ public class LoadDriver extends JPanel implements DocumentListener
 		
 		connectionThings();
 		buttonDisplay();
-		
-		gameSystems.setSelectedIndex(indexOfSystems);
-		gameSystems.setBounds(35, 425, 100, 25);
-		pickSystem.setBounds(35, 400, 200, 25);
+			
+		//gameSystems.setSelectedIndex(indexOfSystems);
+		gameSystems.setBounds(35, 475, 100, 25);
+		pickSystem.setBounds(35, 450, 200, 25);
+				
 		
 		add(completeGame);
 		add(gameSystems);
 		add(pickSystem);
-		
 		pickSystem();
 	}
 	
@@ -128,9 +131,9 @@ public class LoadDriver extends JPanel implements DocumentListener
 	{
 		try
 		{
-			txtarea.append("Game Title                                             " + 
+			txtarea.append(" Game Title                                          " + 
 					"\t" + "System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n" + "\n");
-			
+						
 			query = "Select * from MasterGameList Order By Game_Title";
 			statement = conn.createStatement();
 			result = statement.executeQuery(query);
@@ -146,7 +149,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 					Game_Title = Game_Title.format("%-55s", Game_Title);
 				if (Game_Title.length() < 45)
 					Game_Title = Game_Title.format("%-45s", Game_Title);
-				txtarea.append(Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");
+				txtarea.append(" " + Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");
 			}
 		}
 		finally
@@ -169,6 +172,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 		JButton loadButton = new JButton("Load File");
 		JButton deleteButton = new JButton("Clear Table");
 		JButton refreshButton = new JButton("Refresh Table");
+		JButton addSystemButton = new JButton("Add System");
+		JButton deleteSystemButton = new JButton("Delete System");
 			
 		searchButton.setBounds(35, 25, 150, 25);
 		addGameButton.setBounds(35, 60, 150, 25);
@@ -180,6 +185,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 		loadButton.setBounds(35, 270, 150, 25);
 		deleteButton.setBounds(35, 305, 150, 25);
 		refreshButton.setBounds(35, 340, 150, 25);
+		addSystemButton.setBounds(35, 375, 150, 25);
+		deleteSystemButton.setBounds(35, 410, 150, 25);
 		
 		searchButton.setToolTipText("Search for a game.");
 		addGameButton.setToolTipText("Add a game to the list.");
@@ -191,6 +198,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 		loadButton.setToolTipText("Loads a text file in the table.");
 		deleteButton.setToolTipText("Clears the table for a new list.");
 		refreshButton.setToolTipText("Refreshes the table.");
+		addSystemButton.setToolTipText("Add a System to the System list.");
+		deleteSystemButton.setToolTipText("Delete a System from the System list.");
 		
 		searchTextBox.setBounds(200, 25, 200, 25);
 		searchTextBox.getDocument().addDocumentListener(this);
@@ -317,8 +326,10 @@ public class LoadDriver extends JPanel implements DocumentListener
 			{
 				try
 				{
-					query = "Select game_title, game_system from MasterGameList Where INSTR(Game_Beaten, 'No') > 0 Order By Rand() Limit 0, 1 ;";
-					
+					String gameSystem = (String) gameSystems.getSelectedItem();
+					query = "Select game_title, game_system from MasterGameList Where game_system = " + "'" + gameSystem + "'" + 
+					" AND INSTR(Game_Beaten, 'No') > 0 Order By Rand() Limit 0, 1;";
+										
 					randomGame.setBounds(210, 95, 400, 25);
 					
 					statement = conn.createStatement();
@@ -520,6 +531,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 		add(loadButton);
 		add(deleteButton);
 		add(refreshButton);
+		add(addSystemButton);
+		add(deleteSystemButton);
 		add(searchTextBox);
 		add(stopSearch);
 		add(randomGame);
@@ -635,7 +648,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 			int updateDB = ps.executeUpdate(query);
 			
 			if (empty == false)
-				txtarea.append(getGameTitle + "\t" + getSystem + "\t" + isComplete + "\t" + isBeaten + "\t" + "\n");				
+				txtarea.append(" " + getGameTitle + "\t" + getSystem + "\t" + isComplete + "\t" + isBeaten + "\t" + "\n");				
 		}
 		catch (SQLException e1) 
 		{
@@ -826,7 +839,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 							Game_Title = Game_Title.format("%-55s", Game_Title);
 						if (Game_Title.length() < 45)
 							Game_Title = Game_Title.format("%-45s", Game_Title);
-						txtarea.append(Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");			
+						txtarea.append(" " + Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");			
 					}
 				}
 				catch (SQLException e1) 
