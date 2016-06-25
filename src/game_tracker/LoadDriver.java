@@ -80,8 +80,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 	String[] game_Systems = 
 		{"PS3", "PS4", "Wii U", "Wii", "GCN", 
 		"NES", "SNES", "N64", "3DS", "Vita", "DS", "DC", "PS1", 
-		"PS2", "Xbox", "Saturn", "GEN"};
-	JComboBox<String> gameSystems = new JComboBox<String>(game_Systems);
+		"PS2", "Xbox", "Saturn", "GEN", "PC"};
 	
 	int indexComplete = 2;
 	String[] game_complete = {"Yes", "No"};
@@ -91,11 +90,8 @@ public class LoadDriver extends JPanel implements DocumentListener
 	String[] game_beaten = {"Yes", "No"};
 	JComboBox<String> beatenGame = new JComboBox<String>(game_beaten);
 	
-	String[] numberSystems = systems.toArray(new String[systems.size()]);
-	JComboBox<String> numberOfSystems = new JComboBox<String>(numberSystems);
-	
-	DefaultComboBoxModel<String> gameSystemss = new DefaultComboBoxModel<String>();
-	JComboBox<String> jcb = new JComboBox<String>(gameSystemss);
+	DefaultComboBoxModel<String> gameSystems = new DefaultComboBoxModel<String>();
+	JComboBox<String> jcb = new JComboBox<String>(gameSystems);
 	
 	//Basic constructor to run methods and set the layout
 	public LoadDriver() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
@@ -108,34 +104,22 @@ public class LoadDriver extends JPanel implements DocumentListener
 		connectionThings();
 		buttonDisplay();
 			
-		gameSystems.setBounds(35, 475, 100, 25);
+		jcb.setBounds(35, 475, 100, 25);
 		pickSystem.setBounds(35, 450, 200, 25);
-				
-		gameSystemss.addElement("PS3");
-		gameSystemss.addElement("PS4");
-		gameSystemss.addElement("PS1");
 		
-		
-		JButton testButton = new JButton("Remove an item");
-		testButton.setBounds(35, 575, 100, 25);
-		
-		testButton.addActionListener(new ActionListener()
+		for (int i = 0; i < game_Systems.length; i++)
 		{
-			@Override
-			public void actionPerformed(ActionEvent e) 
-			{
-				gameSystemss.removeElement("PS1");
-			}
-		});
+			systems.add(game_Systems[i]);
+		}
 		
-		jcb.setBounds(35, 525, 100, 25);
-
+		for (int i = 0; i < systems.size(); i++)
+		{
+			gameSystems.addElement(systems.get(i));
+		}	
+		
 		add(completeGame);
-		add(gameSystems);
 		add(jcb);
 		add(pickSystem);
-		add(numberOfSystems);
-		add(testButton);
 		pickSystem();
 	}
 	
@@ -381,7 +365,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 				if (addingGame == true)
 				{
 					addingGame = false;
-					gameSystems.setBounds(375, 55, 100, 25);
+					jcb.setBounds(375, 55, 100, 25);
 					systemSelect.setVisible(true);
 					gameWrite.setVisible(true);
 					completeYN.setVisible(true);
@@ -411,7 +395,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 					completeYN.setVisible(false);
 					beatenYN.setVisible(false);
 					gameWriter.setVisible(false);
-					gameSystems.setBounds(35, 425, 100, 25);
+					jcb.setBounds(35, 425, 100, 25);
 					completeGame.setVisible(false);
 					beatenGame.setVisible(false);
 					randomGame.setText("");
@@ -834,7 +818,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 	
 	public void pickSystem()
 	{
-		gameSystems.addActionListener(new ActionListener()
+		jcb.addActionListener(new ActionListener()
 		{
 			@Override
 			@SuppressWarnings("static-access")
@@ -908,7 +892,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 			}
 		});
 		
-		gameSystems.addActionListener(new ActionListener()
+		jcb.addActionListener(new ActionListener()
 		{
 			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e)
