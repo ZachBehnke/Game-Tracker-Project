@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.sql.SQLException;
-
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 
@@ -25,7 +24,7 @@ public class Main extends JFrame
 		frame.setResizable(true);
 		frame.add(loadDriver.pane, BorderLayout.WEST);
 		loadDriver.pane.setPreferredSize(new Dimension(575, 1000));
-		loadDriver.txtarea.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 5));
+		//loadDriver.txtarea.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 5));
 		frame.setBackground(Color.WHITE);
 		frame.add(loadDriver);
 		frame.setSize(width, height);

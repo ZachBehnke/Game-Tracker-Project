@@ -39,6 +39,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 	JTextField searchTextBox = new JTextField(25);
 	JTextField gameWriter = new JTextField(25);
 	JTextField deleteWriter = new JTextField(25);
+	StringBuilder stringHelp = new StringBuilder();
 	
 	public Statement statement = null;
 	public ResultSet result = null;
@@ -55,6 +56,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 	public static boolean active = true;
 	
 	String getGameTitle, getSystem, isComplete, isBeaten, getDeletedGame;
+	String whitespace = " ";
 	
 	//Used for the searching method.
 	Color Hilit_Color = Color.CYAN;
@@ -100,9 +102,6 @@ public class LoadDriver extends JPanel implements DocumentListener
 		txtarea.setVisible(true);
 		
 		setLayout(null);
-		
-		connectionThings();
-		buttonDisplay();
 			
 		jcb.setBounds(35, 475, 100, 25);
 		pickSystem.setBounds(35, 450, 200, 25);
@@ -120,6 +119,9 @@ public class LoadDriver extends JPanel implements DocumentListener
 		add(completeGame);
 		add(jcb);
 		add(pickSystem);
+		
+		connectionThings();
+		buttonDisplay();
 		pickSystem();
 	}
 	
@@ -138,14 +140,16 @@ public class LoadDriver extends JPanel implements DocumentListener
 	@SuppressWarnings("static-access")
 	public void selectQuery() throws SQLException
 	{
+		txtarea.append("Game Title                                          " + 
+				"\t" + "System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n" + "\n");
+		
+		PreparedStatement ps = null;
+		
 		try
-		{
-			txtarea.append(" Game Title                                          " + 
-					"\t" + "System" + "\t" + "Complete" + "\t" + "Game Beaten" + "\n" + "\n");
-						
+		{			
 			query = "Select * from MasterGameList Order By Game_Title";
-			statement = conn.createStatement();
-			result = statement.executeQuery(query);
+			ps = (PreparedStatement) conn.prepareStatement(query);
+			result = ps.executeQuery(query);
 			
 			//This appends all the games from MasterGameList to the text area, where everything is seen.
 			while (result.next())
@@ -156,15 +160,15 @@ public class LoadDriver extends JPanel implements DocumentListener
 				String Game_Beaten = result.getString("Game_Beaten");
 				if (Game_Title.length() < 20)
 					Game_Title = Game_Title.format("%-55s", Game_Title);
-				if (Game_Title.length() < 45)
+				if (Game_Title.length() < 40)
 					Game_Title = Game_Title.format("%-45s", Game_Title);
-				txtarea.append(" " + Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten + "\t" + "\n");
+				txtarea.append(Game_Title + "\t" + Game_System + "\t" + Complete + "\t" + Game_Beaten  + "\n");
 			}
 		}
 		finally
 		{
-			if (statement != null)
-				statement.close();
+			if (ps != null)
+				ps.close();
 		}
 	}
 	
@@ -395,7 +399,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 					completeYN.setVisible(false);
 					beatenYN.setVisible(false);
 					gameWriter.setVisible(false);
-					jcb.setBounds(35, 425, 100, 25);
+					jcb.setBounds(35, 475, 100, 25);
 					completeGame.setVisible(false);
 					beatenGame.setVisible(false);
 					randomGame.setText("");
@@ -613,7 +617,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 	}
 	
 	//this function adds a game to the database, and it is shown in the text area, appended to the bottom.
-	@SuppressWarnings("static-access")
+	@SuppressWarnings({ "static-access"})
 	public void addAGame() throws SQLException, BadLocationException
 	{
 		choose();
@@ -640,6 +644,9 @@ public class LoadDriver extends JPanel implements DocumentListener
 			if (getGameTitle.length() < 45 && getGameTitle.length() > 20)
 				getGameTitle = getGameTitle.format("%-45s", getGameTitle);
 			
+			stringHelp.append(whitespace + getGameTitle);
+			getGameTitle = stringHelp.toString();
+			
 			empty = false;
 		
 			query = ("Insert Into MasterGameList (Game_Title, Game_System, Complete, Game_Beaten) values "
@@ -657,7 +664,7 @@ public class LoadDriver extends JPanel implements DocumentListener
 			int updateDB = ps.executeUpdate(query);
 			
 			if (empty == false)
-				txtarea.append(" " + getGameTitle + "\t" + getSystem + "\t" + isComplete + "\t" + isBeaten + "\t" + "\n");				
+				txtarea.append(getGameTitle + "\t" + getSystem + "\t" + isComplete + "\t" + isBeaten + "\t" + "\n");				
 		}
 		catch (SQLException e1) 
 		{
@@ -674,8 +681,13 @@ public class LoadDriver extends JPanel implements DocumentListener
 	public void deleteAGame() throws SQLException, BadLocationException
 	{
 		getDeletedGame = deleteWriter.getText().replace("'", "''");
+		
+		stringHelp.append(whitespace + getDeletedGame);
+		getDeletedGame = stringHelp.toString();
 	        		
 		query = ("Delete from MasterGameList where game_title = " + "'" + getDeletedGame + "'" + ";");
+		
+		System.out.println(query);
 		
 		PreparedStatement ps = null;
 		
@@ -702,6 +714,9 @@ public class LoadDriver extends JPanel implements DocumentListener
 		String gameTitle = gameWriter.getText().replace("'", "''");
 		String isBeaten = (String) beatenGame.getSelectedItem();
 		String isComplete = (String) completeGame.getSelectedItem();
+		
+		stringHelp.append(whitespace + gameTitle);
+		gameTitle = stringHelp.toString();
 		
 		query = ("Update MasterGameList Set game_beaten =" + "'" + isBeaten  + "'" + ", complete =" + "'" + isComplete + "'" + "where game_title =" + "'" + gameTitle + "'" + ";");
 		
